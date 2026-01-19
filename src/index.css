@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@config "../tailwind.config.mjs";
+
+@layer base {
+    body {
+        @apply text-light-fg-primary dark:text-dark-fg-primary bg-light-bg-primary dark:bg-dark-bg-primary;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+
+    .wrapper-bg {
+        @apply bg-light-bg-primary dark:bg-dark-bg-primary;
+        /*background-image: url('/src/images/background.png');*/
+        /*background-repeat: no-repeat;*/
+        /*background-size: cover;*/
+        /*background-attachment: fixed;*/
+        /*background-position: 50% 130px;*/
+    }
+
+    /*
+     Set the default cursor for buttons.
+     ref: https://github.com/tailwindlabs/tailwindcss/issues/15773
+     ref: https://tailwindcss.com/docs/upgrade-guide#preflight-changes
+     */
+    button:not(:disabled), [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
+
+    *::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    *::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+    }
+
+    *::-webkit-calendar-picker-indicator {
+        @apply bg-white;
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+    }
+
+    ::selection {
+        @apply bg-primary-400/50 text-white;
+    }
+
+    .scroll-bar-hidden::-webkit-scrollbar {
+        display: none;
+        width: 0px;
+        height: 0px;
+    }
+
+    .scroll-bar-hidden {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .overflow-y-auto,
+    .overflow-y-scroll {
+        overflow-y: auto !important;
+        overflow-y: overlay !important;
+    }
+
+    *:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .text-content h1 {
+        @apply text-2xl;
+        @apply font-bold;
+        @apply mb-5;
+    }
+    .text-content h2 {
+        @apply text-lg;
+        @apply font-bold;
+        @apply mb-3;
+    }
+    .text-content h3 {
+        @apply text-base;
+        @apply font-bold;
+        @apply mb-3;
+    }
+    .text-content p {
+        @apply text-sm;
+        @apply mb-3;
+    }
+    .text-content ul {
+        @apply text-sm;
+        @apply mb-3;
+        @apply ml-6;
+        @apply list-disc;
+    }
+    .text-content li {
+        @apply text-sm;
+    }
+    .text-content a {
+        @apply text-sm;
+        @apply text-primary;
+        @apply underline;
+    }
+    .focus:focus {
+        @apply outline-hidden;
+        @apply ring-2;
+        @apply ring-primary;
+    }
+    .sortable-ghost {
+        @apply opacity-10;
+    }
+    .sortable-ghost::before {
+        content: '';
+        @apply absolute z-1 w-full h-full bg-gray-500 dark:bg-gray-800;
+    }
+
+    /* Specific Rules for React Select (that cannot be applied via component styles/props) */
+    .ReactSelectInputParent input {
+        box-shadow: none !important;
+    }
+}
