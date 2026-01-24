@@ -8,9 +8,6 @@ function App() {
   return (
     <Routes>
       <Route element={<HomePage />} path='/' />
-      {/* <Route element={<ProtectedRoute />}>*/}
-      {/*  <Route element={<HomePage />} path='/' />*/}
-      {/* </Route>*/}
     </Routes>
   );
 }

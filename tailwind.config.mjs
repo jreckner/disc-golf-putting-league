@@ -30,32 +30,22 @@ module.exports = {
       },
       colors: {
         primary: {
-          DEFAULT: '#00C425',
-          50: '#CEFFCE',
-          100: '#A1FFA1',
-          200: '#72FD72',
-          300: '#3AF23A',
-          400: '#00C425',
-          500: '#008A44',
-          600: '#006446',
-          700: '#034D36',
-          800: '#012D20',
-          900: '#011711',
+          DEFAULT: '#732FDF',
         },
         secondary: {
-          DEFAULT: '#1C1B1F',
+          DEFAULT: '#1C083B',
         },
         tertiary: {
           DEFAULT: '#323137',
         },
         black: {
-          DEFAULT: '#323137',
+          DEFAULT: '#2d3748',
           50: '#EBEAED',
           100: '#D6D5D9',
           200: '#ABAAB3',
           300: '#817F8D',
           400: '#595762',
-          500: '#323137',
+          500: '#2d3748',
           600: '#2B2A2F',
           700: '#232327',
           800: '#1C1B1F',
@@ -166,14 +156,10 @@ module.exports = {
         },
         dark: {
           bg: {
-            primary: '#1C1B1F', // black['800']
-            secondary: '#323137', // black['500']
-            tertiary: '#151417', // black['900']
+            primary: '#2d3748',
           },
           fg: {
-            primary: '#EBEAED', // black['50']
-            secondary: '#817F8D', // black['300']
-            tertiary: '#323137', // black['500']
+            primary: '#FFFFFF',
           },
         },
       },
@@ -235,56 +221,36 @@ module.exports = {
       light: {
         layout: {}, // light theme layout tokens
         colors: {
-          background: '#F4F5F6',
-          foreground: '#25282D',
-          focus: '#3AF23A',
+          background: '#FFFFFF',
+          foreground: '#1C083B',
+          focus: '#732FDF',
           overlay: '#FFFFFF',
           success: '#21A62E',
           warning: '#D1B41D',
           danger: '#A62921',
           primary: {
-            DEFAULT: '#00C425',
-            50: '#CEFFCE',
-            100: '#A1FFA1',
-            200: '#72FD72',
-            300: '#3AF23A',
-            400: '#00C425',
-            500: '#008A44',
-            600: '#006446',
-            700: '#034D36',
-            800: '#012D20',
-            900: '#011711',
+            DEFAULT: '#1C083B',
           },
           secondary: {
-            DEFAULT: '#00C425',
+            DEFAULT: '#732FDF',
           },
         }, // light theme colors
       },
       dark: {
         layout: {}, // dark theme layout tokens
         colors: {
-          background: '#1C1B1F',
-          foreground: '#888888',
+          background: '#2d3748',
+          foreground: '#ffffff',
           focus: '#3AF23A',
           overlay: '#FFFFFF',
           success: '#21A62E',
           warning: '#D1B41D',
           danger: '#A62921',
           primary: {
-            DEFAULT: '#00C425',
-            50: '#CEFFCE',
-            100: '#A1FFA1',
-            200: '#72FD72',
-            300: '#3AF23A',
-            400: '#00C425',
-            500: '#008A44',
-            600: '#006446',
-            700: '#034D36',
-            800: '#012D20',
-            900: '#011711',
+            DEFAULT: '#732FDF',
           },
           secondary: {
-            DEFAULT: '#00C425',
+            DEFAULT: '#1C083B',
           },
         }, // dark theme colors
       },

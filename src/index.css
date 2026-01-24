@@ -1,6 +1,25 @@
 @import "tailwindcss";
 @config "../tailwind.config.mjs";
 
+/*
+#fa6e0a - orange from logo
+--global-palette1: #732FDF; // rgb(115, 47, 223) Purple
+--global-palette2: #4B189E;
+--global-palette3: #1C083B; // Dark text
+--global-palette4: #2d3748; // Header dark background (~black)
+--global-palette5: #4a5568;
+--global-palette6: #718096;
+--global-palette7: #e8e6e1;
+--global-palette8: #faf9f7;
+--global-palette9: #ffffff; // light text (white)
+--global-palette10: oklch(from var(--global-palette1) calc(l + 0.10 * (1 - l)) calc(c * 1.00) calc(h + 180) / 100%);
+--global-palette11: #13612e;
+--global-palette12: #1159af;
+--global-palette13: #b82105;
+--global-palette14: #f7630c;
+--global-palette15: #f5a524;
+ */
+
 @layer base {
     body {
         @apply text-light-fg-primary dark:text-dark-fg-primary bg-light-bg-primary dark:bg-dark-bg-primary;
