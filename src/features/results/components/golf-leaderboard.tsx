@@ -1,260 +1,31 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { GiLaurelsTrophy } from 'react-icons/gi';
 import { LuTarget } from 'react-icons/lu';
 
-// Mock API data - in production, this would come from an actual API
-// const mockData = [
-//   // Advanced League
-//   {
-//     id: 1,
-//     left_putt_10ft: 2,
-//     left_putt_20ft: 0,
-//     left_putt_30ft: 0,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 0,
-//     center_putt_20ft: 0,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 0,
-//     right_putt_20ft: 0,
-//     right_putt_30ft: 0,
-//     right_putt_40ft: 0,
-//     total_score: 2,
-//     created_at: 1769316136,
-//     league: 'adv',
-//     email: 'jon.reckner@gmail.com',
-//     name: 'Jon Reckner',
-//   },
-//   {
-//     id: 2,
-//     left_putt_10ft: 4,
-//     left_putt_20ft: 3,
-//     left_putt_30ft: 2,
-//     left_putt_40ft: 1,
-//     center_putt_10ft: 4,
-//     center_putt_20ft: 3,
-//     center_putt_30ft: 1,
-//     center_putt_40ft: 1,
-//     right_putt_10ft: 3,
-//     right_putt_20ft: 3,
-//     right_putt_30ft: 2,
-//     right_putt_40ft: 1,
-//     total_score: 58,
-//     created_at: 1769316136,
-//     league: 'adv',
-//     email: 'sarah.thompson@gmail.com',
-//     name: 'Sarah Thompson',
-//   },
-//   {
-//     id: 3,
-//     left_putt_10ft: 3,
-//     left_putt_20ft: 2,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 1,
-//     center_putt_10ft: 3,
-//     center_putt_20ft: 3,
-//     center_putt_30ft: 2,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 4,
-//     right_putt_20ft: 2,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 1,
-//     total_score: 52,
-//     created_at: 1769316136,
-//     league: 'adv',
-//     email: 'mike.anderson@gmail.com',
-//     name: 'Mike Anderson',
-//   },
-//   {
-//     id: 4,
-//     left_putt_10ft: 4,
-//     left_putt_20ft: 3,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 4,
-//     center_putt_20ft: 2,
-//     center_putt_30ft: 1,
-//     center_putt_40ft: 1,
-//     right_putt_10ft: 3,
-//     right_putt_20ft: 3,
-//     right_putt_30ft: 2,
-//     right_putt_40ft: 0,
-//     total_score: 48,
-//     created_at: 1769316136,
-//     league: 'adv',
-//     email: 'emma.davis@gmail.com',
-//     name: 'Emma Davis',
-//   },
-//
-//   // Open League
-//   {
-//     id: 5,
-//     left_putt_10ft: 3,
-//     left_putt_20ft: 2,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 3,
-//     center_putt_20ft: 2,
-//     center_putt_30ft: 1,
-//     center_putt_40ft: 1,
-//     right_putt_10ft: 2,
-//     right_putt_20ft: 2,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 0,
-//     total_score: 42,
-//     created_at: 1769316136,
-//     league: 'open',
-//     email: 'alex.martinez@gmail.com',
-//     name: 'Alex Martinez',
-//   },
-//   {
-//     id: 6,
-//     left_putt_10ft: 2,
-//     left_putt_20ft: 1,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 2,
-//     center_putt_20ft: 2,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 3,
-//     right_putt_20ft: 1,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 1,
-//     total_score: 36,
-//     created_at: 1769316136,
-//     league: 'open',
-//     email: 'lisa.wilson@gmail.com',
-//     name: 'Lisa Wilson',
-//   },
-//   {
-//     id: 7,
-//     left_putt_10ft: 4,
-//     left_putt_20ft: 2,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 1,
-//     center_putt_10ft: 3,
-//     center_putt_20ft: 3,
-//     center_putt_30ft: 1,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 3,
-//     right_putt_20ft: 2,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 1,
-//     total_score: 50,
-//     created_at: 1769316136,
-//     league: 'open',
-//     email: 'david.brown@gmail.com',
-//     name: 'David Brown',
-//   },
-//   {
-//     id: 8,
-//     left_putt_10ft: 3,
-//     left_putt_20ft: 2,
-//     left_putt_30ft: 0,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 3,
-//     center_putt_20ft: 1,
-//     center_putt_30ft: 1,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 2,
-//     right_putt_20ft: 2,
-//     right_putt_30ft: 0,
-//     right_putt_40ft: 1,
-//     total_score: 38,
-//     created_at: 1769316136,
-//     league: 'open',
-//     email: 'rachel.taylor@gmail.com',
-//     name: 'Rachel Taylor',
-//   },
-//
-//   // Junior League
-//   {
-//     id: 9,
-//     left_putt_10ft: 2,
-//     left_putt_20ft: 1,
-//     left_putt_30ft: 0,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 2,
-//     center_putt_20ft: 1,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 2,
-//     right_putt_20ft: 1,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 0,
-//     total_score: 28,
-//     created_at: 1769316136,
-//     league: 'junior',
-//     email: 'tyler.johnson@gmail.com',
-//     name: 'Tyler Johnson',
-//   },
-//   {
-//     id: 10,
-//     left_putt_10ft: 3,
-//     left_putt_20ft: 1,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 2,
-//     center_putt_20ft: 2,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 2,
-//     right_putt_20ft: 1,
-//     right_putt_30ft: 0,
-//     right_putt_40ft: 0,
-//     total_score: 32,
-//     created_at: 1769316136,
-//     league: 'junior',
-//     email: 'olivia.smith@gmail.com',
-//     name: 'Olivia Smith',
-//   },
-//   {
-//     id: 11,
-//     left_putt_10ft: 1,
-//     left_putt_20ft: 1,
-//     left_putt_30ft: 0,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 2,
-//     center_putt_20ft: 0,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 1,
-//     right_putt_20ft: 1,
-//     right_putt_30ft: 0,
-//     right_putt_40ft: 0,
-//     total_score: 20,
-//     created_at: 1769316136,
-//     league: 'junior',
-//     email: 'ethan.williams@gmail.com',
-//     name: 'Ethan Williams',
-//   },
-//   {
-//     id: 12,
-//     left_putt_10ft: 2,
-//     left_putt_20ft: 2,
-//     left_putt_30ft: 1,
-//     left_putt_40ft: 0,
-//     center_putt_10ft: 3,
-//     center_putt_20ft: 1,
-//     center_putt_30ft: 0,
-//     center_putt_40ft: 0,
-//     right_putt_10ft: 2,
-//     right_putt_20ft: 1,
-//     right_putt_30ft: 1,
-//     right_putt_40ft: 0,
-//     total_score: 34,
-//     created_at: 1769316136,
-//     league: 'junior',
-//     email: 'sophia.garcia@gmail.com',
-//     name: 'Sophia Garcia',
-//   },
-// ];
+interface Player {
+  name: string;
+  email: string;
+  total_score: number;
+  created_at: number;
+  league?: string;
+  left_putt_10ft: number;
+  left_putt_20ft: number;
+  left_putt_30ft: number;
+  left_putt_40ft: number;
+  center_putt_10ft: number;
+  center_putt_20ft: number;
+  center_putt_30ft: number;
+  center_putt_40ft: number;
+  right_putt_10ft: number;
+  right_putt_20ft: number;
+  right_putt_30ft: number;
+  right_putt_40ft: number;
+}
 
 function GolfLeaderboard() {
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [activeTab, setActiveTab] = useState('');
 
   const { data: mockData, isLoading } = useQuery({
@@ -274,7 +45,7 @@ function GolfLeaderboard() {
   }
 
   // Get anonymous name format
-  const getAnonymousName = (fullName) => {
+  const getAnonymousName = (fullName: string) => {
     const parts = fullName.split(' ');
     if (parts.length < 2) {
       return 'Unknown';
@@ -285,13 +56,13 @@ function GolfLeaderboard() {
   };
 
   // Format date from timestamp
-  const formatDate = (timestamp) => {
+  const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   // Group data by league and date
-  const groupedData = mockData.reduce((acc, player) => {
+  const groupedData = mockData.reduce((acc: any, player: Player) => {
     const league = player.league || 'General';
     const date = formatDate(player.created_at);
 
@@ -309,7 +80,7 @@ function GolfLeaderboard() {
   // Sort players by score within each group
   Object.keys(groupedData).forEach((league) => {
     Object.keys(groupedData[league]).forEach((date) => {
-      groupedData[league][date].sort((a, b) => b.total_score - a.total_score);
+      groupedData[league][date].sort((a: Player, b: Player) => b.total_score - a.total_score);
     });
   });
 
@@ -321,21 +92,21 @@ function GolfLeaderboard() {
   }
 
   // Handle tab change and store selection
-  const handleTabChange = (league) => {
+  const handleTabChange = (league: string) => {
     setActiveTab(league);
   };
 
   function WinnersView() {
     const winners = leagues.map((league) => {
       const leagueData = groupedData[league];
-      const allPlayers = Object.values(leagueData).flat();
+      const allPlayers: Player[] = Object.values<Player>(leagueData).flat();
       allPlayers.sort((a, b) => b.total_score - a.total_score);
       return { league, player: allPlayers[0] };
     });
 
     return (
       <div className='space-y-4'>
-        {winners.map(({ league, player }) => (
+        {winners.map(({ league, player }: { league: string; player: Player }) => (
           <div key={league} className='bg-white rounded-lg shadow-sm border border-slate-200'>
             <div className='bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3 border-b border-amber-200'>
               <h3 className='font-semibold text-slate-700 flex items-center gap-2'>
@@ -367,7 +138,7 @@ function GolfLeaderboard() {
     );
   }
 
-  function PuttDetails({ player }) {
+  function PuttDetails({ player }: { player: Player }) {
     return (
       <div className='grid grid-cols-1 gap-4'>
         <div className='bg-slate-50 rounded-lg p-4'>
@@ -439,53 +210,55 @@ function GolfLeaderboard() {
     );
   }
 
-  function LeagueStandings({ league }) {
+  function LeagueStandings({ league }: { league: string }) {
     return (
       <div className='space-y-6'>
-        {Object.entries(groupedData[league]).map(([date, players]) => (
-          <div key={date} className='bg-white rounded-lg shadow-sm border border-slate-200'>
-            <div className='bg-slate-100 px-4 py-2 border-b border-slate-200'>
-              <h3 className='font-semibold text-slate-700'>{date}</h3>
-            </div>
-            <div className='divide-y divide-slate-200'>
-              {players.map((player, index) => (
-                <div
-                  key={player.email}
-                  className={`flex items-center justify-between px-4 py-3 transition-colors ${
-                    index === 0
-                      ? 'bg-gradient-to-r from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100 border-l-4 border-amber-400'
-                      : 'hover:bg-slate-50'
-                  }`}
-                >
-                  <div className='flex items-center gap-3'>
-                    <div
-                      className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm ${
-                        index === 0 ? 'bg-amber-400 text-white' : 'bg-slate-200 text-slate-600'
-                      }`}
-                    >
-                      {index + 1}
-                    </div>
-                    {index === 0 && <GiLaurelsTrophy className='w-5 h-5 text-amber-500' />}
-                    <span className='font-medium text-slate-800'>
-                      {getAnonymousName(player.name)}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setSelectedPlayer(player)}
-                    className={`px-4 py-2 text-white rounded-lg font-semibold transition-colors cursor-pointer ${
+        {Object.entries(groupedData[league] as Record<string, Player[]>).map(
+          ([date, players]: [string, Player[]]) => (
+            <div key={date} className='bg-white rounded-lg shadow-sm border border-slate-200'>
+              <div className='bg-slate-100 px-4 py-2 border-b border-slate-200'>
+                <h3 className='font-semibold text-slate-700'>{date}</h3>
+              </div>
+              <div className='divide-y divide-slate-200'>
+                {players.map((player: Player, index: number) => (
+                  <div
+                    key={player.email}
+                    className={`flex items-center justify-between px-4 py-3 transition-colors ${
                       index === 0
-                        ? 'bg-amber-500 hover:bg-amber-600 ring-2 ring-yellow-400 shadow-lg shadow-amber-300/50'
-                        : 'hover:opacity-90'
+                        ? 'bg-gradient-to-r from-amber-50 to-yellow-50 hover:from-amber-100 hover:to-yellow-100 border-l-4 border-amber-400'
+                        : 'hover:bg-slate-50'
                     }`}
-                    style={index !== 0 ? { backgroundColor: '#732FDF' } : {}}
                   >
-                    {player.total_score}
-                  </button>
-                </div>
-              ))}
+                    <div className='flex items-center gap-3'>
+                      <div
+                        className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm ${
+                          index === 0 ? 'bg-amber-400 text-white' : 'bg-slate-200 text-slate-600'
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
+                      {index === 0 && <GiLaurelsTrophy className='w-5 h-5 text-amber-500' />}
+                      <span className='font-medium text-slate-800'>
+                        {getAnonymousName(player.name)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setSelectedPlayer(player)}
+                      className={`px-4 py-2 text-white rounded-lg font-semibold transition-colors cursor-pointer ${
+                        index === 0
+                          ? 'bg-amber-500 hover:bg-amber-600 ring-2 ring-yellow-400 shadow-lg shadow-amber-300/50'
+                          : 'hover:opacity-90'
+                      }`}
+                      style={index !== 0 ? { backgroundColor: '#732FDF' } : {}}
+                    >
+                      {player.total_score}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ),
+        )}
       </div>
     );
   }

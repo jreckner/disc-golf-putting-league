@@ -79,7 +79,7 @@ function HomePage() {
       queryClient.invalidateQueries({ queryKey: ['results'] });
       alert('Post created successfully!');
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       // Handle errors
       alert(`Error: ${error.message}`);
     },
