@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (response: CredentialResponse) => {
     if (response?.credential) {
+      console.log(response?.credential);
       const googleUser: GoogleUser = jwtDecode(response.credential);
       setUser(googleUser);
       Lockr.set('google-user', googleUser);

@@ -1,3 +1,5 @@
+import { useMutation, useQueryClient } from 'react-query';
+
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { GiDiscGolfBasket, GiLaurelsTrophy } from 'react-icons/gi';
@@ -30,22 +32,25 @@ function AccordionTitle({ label, score }: { label: string; score: number }) {
 function HomePage() {
   const { user } = useAuth();
   const { currentSelectedLeague } = useLeague();
+  const queryClient = useQueryClient();
   const methods = useForm({
     shouldUnregister: false,
     defaultValues: {
-      Left_putt_10ft: 0,
-      Left_putt_20ft: 0,
-      Left_putt_30ft: 0,
-      Left_putt_40ft: 0,
-      Center_putt_10ft: 0,
-      Center_putt_20ft: 0,
-      Center_putt_30ft: 0,
-      Center_putt_40ft: 0,
-      Right_putt_10ft: 0,
-      Right_putt_20ft: 0,
-      Right_putt_30ft: 0,
-      Right_putt_40ft: 0,
-      totalScore: 0,
+      left_putt_10ft: 0,
+      left_putt_20ft: 0,
+      left_putt_30ft: 0,
+      left_putt_40ft: 0,
+      center_putt_10ft: 0,
+      center_putt_20ft: 0,
+      center_putt_30ft: 0,
+      center_putt_40ft: 0,
+      right_putt_10ft: 0,
+      right_putt_20ft: 0,
+      right_putt_30ft: 0,
+      right_putt_40ft: 0,
+      total_score: 0,
+      created_at: Math.floor(Date.now() / 1000),
+      league: undefined,
     },
   });
 
@@ -57,14 +62,45 @@ function HomePage() {
 
   const totalScore = leftScore + centerScore + rightScore;
 
+  const mutation = useMutation({
+    mutationFn: async (scores) => {
+      console.info('Submitted Results as JSON to API:', scores);
+      const response = await fetch('https://apis.recknerd.com/dgpl_scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scores),
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      // 3. Optional: Invalidate and refetch relevant queries on success
+      queryClient.invalidateQueries({ queryKey: ['results'] });
+      alert('Post created successfully!');
+    },
+    onError: (error) => {
+      // Handle errors
+      alert(`Error: ${error.message}`);
+    },
+  });
+
   const onSubmit = (data: any) => {
     data.email = user?.email;
     data.name = user?.name;
-    data.totalScore = totalScore;
-    const resultsAsJSON = JSON.stringify(data, null, 2);
-    console.info('Submitted Results as JSON to API:', resultsAsJSON);
-    // CALL out to API to submit results
+    data.total_score = totalScore;
+    data.league = currentSelectedLeague;
+    data.created_at = Math.floor(Date.now() / 1000);
+    mutation.mutate(data);
   };
+
+  // const { data: mockData, isLoading } = useQuery({
+  //   queryKey: ['results'],
+  //   queryFn: async () => {
+  //     const response = await fetch('https://apis.recknerd.com/dgpl_scores');
+  //     return response.json();
+  //   },
+  // });
 
   if (!user) {
     return (

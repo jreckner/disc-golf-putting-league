@@ -8,7 +8,7 @@ function PuttTracker({ basket, distance }: { basket: String; distance: String })
   return (
     <Card className='bg-background/20 text-secondary/80 p-3 w-full'>
       <Controller
-        name={`${basket}_putt_${distance}`}
+        name={`${basket.toLowerCase()}_putt_${distance}`}
         control={control}
         render={({ field }) => (
           <Slider
