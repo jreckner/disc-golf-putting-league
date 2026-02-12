@@ -12,7 +12,7 @@ export const leagues = [
 ];
 
 function LeagueSelector() {
-  const { currentSelectedLeague, setCurrentSelectedLeague} = useLeague();
+  const { currentSelectedLeague, setCurrentSelectedLeague } = useLeague();
   console.info('lastSelectedLeague', currentSelectedLeague);
 
   return (

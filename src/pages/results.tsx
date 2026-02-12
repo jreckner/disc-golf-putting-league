@@ -1,5 +1,5 @@
 import GolfLeaderboard from '@/features/results/components/golf-leaderboard';
-import DefaultLayout from "@/layouts/default";
+import DefaultLayout from '@/layouts/default';
 
 function ResultsPage() {
   return (

@@ -1,4 +1,5 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -31,6 +32,7 @@ function AccordionTitle({ label, score }: { label: string; score: number }) {
 
 function HomePage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { currentSelectedLeague } = useLeague();
   const queryClient = useQueryClient();
   const methods = useForm({
@@ -54,6 +56,20 @@ function HomePage() {
     },
   });
 
+  const { data: isScoresAlreadySubmitted, isLoading } = useQuery({
+    queryKey: ['results', user?.email, new Date().toISOString().slice(0, 10)],
+    queryFn: async () => {
+      if (!user) {
+        return null;
+      }
+      const response = await fetch(
+        `https://apis.recknerd.com/dgpl_scores?email=eq.${user.email}&event_at=eq.${new Date().toISOString().slice(0, 10)}`,
+      );
+      const results = await response.json();
+      return results.length > 0;
+    },
+  });
+
   const formValues = methods.watch();
 
   const leftScore = calculateScore('Left', formValues);
@@ -72,12 +88,13 @@ function HomePage() {
         },
         body: JSON.stringify(scores),
       });
-      return response.json();
+      return response.status === 201;
     },
     onSuccess: () => {
       // 3. Optional: Invalidate and refetch relevant queries on success
       queryClient.invalidateQueries({ queryKey: ['results'] });
-      alert('Post created successfully!');
+      // alert('Post created successfully!');
+      methods.reset();
     },
     onError: (error: Error) => {
       // Handle errors
@@ -91,6 +108,8 @@ function HomePage() {
     data.total_score = totalScore;
     data.league = currentSelectedLeague;
     data.created_at = Math.floor(Date.now() / 1000);
+    data.event_at = new Date().toISOString().slice(0, 10);
+    console.info(JSON.stringify(data, null, 2));
     mutation.mutate(data);
   };
 
@@ -111,6 +130,41 @@ function HomePage() {
           description='You must login before you can start your round.'
           title='Login to Start'
         />
+      </DefaultLayout>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <DefaultLayout>
+        <div className='flex items-center justify-center w-full mb-5'>
+          <Progress
+            aria-label='Checking If Scores Already Exist for Today'
+            label='Loading...'
+            color='primary'
+            size='sm'
+            className='w-full max-w-xs'
+            isIndeterminate
+          />
+        </div>
+      </DefaultLayout>
+    );
+  }
+
+  if (isScoresAlreadySubmitted) {
+    return (
+      <DefaultLayout>
+        <div className='flex flex-col items-center justify-center w-full mb-5 gap-5'>
+          <Alert
+            color='secondary'
+            variant='faded'
+            description='Our records show that you have already submitted scores for today. If you believe this is an error, please contact support.'
+            title='Scores Already Submitted'
+          />
+          <Button color='primary' type='button' onPress={() => navigate('/results')}>
+            View Leaderboard
+          </Button>
+        </div>
       </DefaultLayout>
     );
   }

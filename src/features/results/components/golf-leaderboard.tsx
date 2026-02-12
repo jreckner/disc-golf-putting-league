@@ -4,6 +4,8 @@ import { useQuery } from 'react-query';
 import { GiLaurelsTrophy } from 'react-icons/gi';
 import { LuTarget } from 'react-icons/lu';
 
+import { leagues as leaguesMap } from '@/components/LeagueSelector';
+
 interface Player {
   name: string;
   email: string;
@@ -24,16 +26,38 @@ interface Player {
   right_putt_40ft: number;
 }
 
+// Get list of Events Dates for showing past events too
+// https://apis.recknerd.com/vw_dgpl_event_dates
+// returns list of dates with event_at field, we can use that to show past events and their winners
+// ex: [{"event_at":"2025-01-25"}, {"event_at":"2026-02-12"}]
+
 function GolfLeaderboard() {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [activeTab, setActiveTab] = useState('');
 
-  const { data: mockData, isLoading } = useQuery({
-    queryKey: ['results'],
+  // default to today's UTC date (YYYY-MM-DD)
+  const todayUTC = new Date().toISOString().slice(0, 10);
+  const [selectedEventDate, setSelectedEventDate] = useState<string>(todayUTC);
+
+  // Fetch available event dates (vw_dgpl_event_dates)
+  const { data: eventDates = [] } = useQuery({
+    queryKey: ['eventDates'],
     queryFn: async () => {
-      const response = await fetch('https://apis.recknerd.com/dgpl_scores');
+      const resp = await fetch('https://apis.recknerd.com/vw_dgpl_event_dates');
+      return resp.json();
+    },
+  });
+
+  // Fetch scores for the selected event date (defaults to todayUTC)
+  const { data: mockData, isLoading } = useQuery({
+    queryKey: ['results', selectedEventDate],
+    queryFn: async () => {
+      const response = await fetch(
+        'https://apis.recknerd.com/dgpl_scores?event_at=eq.' + selectedEventDate,
+      );
       return response.json();
     },
+    refetchInterval: 10000, // Refetch every 10 seconds to keep leaderboard updated
   });
 
   if (isLoading) {
@@ -62,20 +86,23 @@ function GolfLeaderboard() {
   };
 
   // Group data by league and date
-  const groupedData = mockData.reduce((acc: any, player: Player) => {
-    const league = player.league || 'General';
-    const date = formatDate(player.created_at);
+  const groupedData = (mockData ?? []).reduce(
+    (acc: any, player: Player) => {
+      const league = player.league || 'General';
+      const date = formatDate(player.created_at);
 
-    if (!acc[league]) {
-      acc[league] = {};
-    }
-    if (!acc[league][date]) {
-      acc[league][date] = [];
-    }
+      if (!acc[league]) {
+        acc[league] = {};
+      }
+      if (!acc[league][date]) {
+        acc[league][date] = [];
+      }
 
-    acc[league][date].push(player);
-    return acc;
-  }, {});
+      acc[league][date].push(player);
+      return acc;
+    },
+    {} as Record<string, Record<string, Player[]>>,
+  );
 
   // Sort players by score within each group
   Object.keys(groupedData).forEach((league) => {
@@ -111,7 +138,7 @@ function GolfLeaderboard() {
             <div className='bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3 border-b border-amber-200'>
               <h3 className='font-semibold text-slate-700 flex items-center gap-2'>
                 <GiLaurelsTrophy className='w-5 h-5 text-amber-500' />
-                {league.charAt(0).toUpperCase() + league.slice(1)} League Champion
+                {leaguesMap.find((l) => l.key === league)?.label} League Champion
               </h3>
             </div>
             <div className='p-4'>
@@ -270,12 +297,38 @@ function GolfLeaderboard() {
           <div className='flex items-center gap-3 mb-2'>
             <LuTarget className='w-8 h-8 text-emerald-600' />
             <h1 className='text-3xl font-bold text-slate-800'>Putting Leaderboard</h1>
+
+            {/* Event date selector: defaults to todayUTC, populated from vw_dgpl_event_dates */}
+            <div className='ml-4'>
+              <label className='sr-only' htmlFor='event-date-select'>
+                Event Date
+              </label>
+              <select
+                id='event-date-select'
+                value={selectedEventDate}
+                onChange={(e) => setSelectedEventDate(e.target.value)}
+                className='ml-4 px-3 py-2 border rounded-md bg-white text-sm'
+              >
+                {/* Include a Today option */}
+                <option value={todayUTC}>Today ({todayUTC})</option>
+                {/* Populate options from eventDates query (if available) - exclude today's date to avoid duplicate option */}
+                {Array.isArray(eventDates) &&
+                  Array.from(new Set(eventDates.map((d: any) => d.event_at)))
+                    .filter((dateStr: string) => dateStr !== todayUTC)
+                    .sort((a: string, b: string) => (a < b ? 1 : -1))
+                    .map((dateStr: string) => (
+                      <option key={dateStr} value={dateStr}>
+                        {dateStr}
+                      </option>
+                    ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Mobile: Tabs */}
         <div className='md:hidden mb-6'>
-          <div className='flex gap-2 overflow-x-auto pb-2'>
+          <div className='flex flex-wrap gap-3 pb-2 justify-center'>
             <button
               onClick={() => handleTabChange('winners')}
               className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
@@ -296,7 +349,7 @@ function GolfLeaderboard() {
                 }`}
                 style={activeTab === league ? { backgroundColor: '#732FDF' } : {}}
               >
-                {league}
+                {leaguesMap.find((l) => l.key === league)?.label}
               </button>
             ))}
           </div>
@@ -308,10 +361,12 @@ function GolfLeaderboard() {
         </div>
 
         {/* Desktop: All leagues */}
-        <div className='hidden md:grid md:grid-cols-2 gap-6'>
+        <div className='hidden md:grid md:grid-cols-2 2xl:grid-cols-3 gap-6'>
           {leagues.map((league) => (
             <div key={league}>
-              <h2 className='text-xl font-bold text-slate-800 mb-4'>{league}</h2>
+              <h2 className='text-xl font-bold text-slate-800 mb-4'>
+                {leaguesMap.find((l) => l.key === league)?.label}
+              </h2>
               <LeagueStandings league={league} />
             </div>
           ))}
